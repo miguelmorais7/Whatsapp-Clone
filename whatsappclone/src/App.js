@@ -19,11 +19,17 @@ export default() =>{
     {chatId: 4, title: 'Teste 4', image: 'https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png'}
   ]);
   const [activeChat, setActiveChat] = useState({});
+  const [user, setUser] = useState({
+    id: 321,
+    image: 'https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png',
+    name: 'Miguel'
+  });
+
   return(
     <div className="app-window">
       <div className="sidebar">
         <header>
-          <img className="header--avatar" src="https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png"/>
+          <img className="header--avatar" src={user.image} alt=""/>
           <div className="header--buttons">
             <div className="header--btn">
               <DonutLargeIcon style={{color: '#919191'}} />
@@ -60,7 +66,7 @@ export default() =>{
       </div>
 
       <div className="contentarea">
-        {activeChat.chatId !== undefined && <ChatWindow/>}
+        {activeChat.chatId !== undefined && <ChatWindow user={user}/>}
         {activeChat.chatId === undefined && <ChatIntro/>}
         
       </div>

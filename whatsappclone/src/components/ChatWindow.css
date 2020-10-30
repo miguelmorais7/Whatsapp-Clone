@@ -56,6 +56,16 @@
     background-size: cover;
     background-position: center;
     background-image: url("https://web.whatsapp.com/img/bg-chat-tile-light_686b98c9fdffef3f63127759e2057750.png");
+    padding: 20px 30px;
+}
+
+.chatWindow--body::-webkit-scrollbar{
+    width: 6px;
+    height: 6px;
+}
+
+.chatWindow--body::-webkit-scrollbar-thumb{
+    background-color: rgba(0,0,0,0.2);
 }
 
 .chatWindow--footer{
