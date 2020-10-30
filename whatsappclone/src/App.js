@@ -1,5 +1,6 @@
 import React, { useState, useEffect} from 'react';
 import './App.css';
+import Api from './Api';
 
 import ChatListItem from './components/ChatListItem';
 import ChatIntro from './components/ChatIntro';
@@ -10,24 +11,32 @@ import DonutLargeIcon from '@material-ui/icons/DonutLarge';
 import ChatIcon from '@material-ui/icons/Chat';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import SearchIcon from '@material-ui/icons/Search';
+import Login from './components/Login';
 
 export default() =>{
 
-  const [chatlist, setChatList] = useState([
-    {chatId: 1, title: 'Teste 1', image: 'https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png'}, 
-    {chatId: 2, title: 'Teste 2', image: 'https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png'},
-    {chatId: 3, title: 'Teste 3', image: 'https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png'},
-    {chatId: 4, title: 'Teste 4', image: 'https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png'}
-  ]);
+  const [chatlist, setChatList] = useState([]);
+
   const [activeChat, setActiveChat] = useState({});
-  const [user, setUser] = useState({
-    id: 321,
-    image: 'https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png',
-    name: 'Miguel'
-  });
+  const [user, setUser] = useState(null);
   const [showNewChat, setShowNewChat] = useState(false);
+  
   const handleNewChat = () =>{
     setShowNewChat(true);
+  }
+
+  const handleLoginData = async (u) =>{ 
+    let newUser ={
+      id: u.uid,   //Objeto com dados direto do facebook
+      name: u.displayName, 
+      image: u.photoURL
+    };
+    await Api.addUser(newUser);
+    setUser(newUser);
+  }
+
+  if(user === null){
+    return(<Login onReceive={handleLoginData}/>);
   }
 
   return(
