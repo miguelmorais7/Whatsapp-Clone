@@ -16,10 +16,16 @@ import Login from './components/Login';
 export default() =>{
 
   const [chatlist, setChatList] = useState([]);
-
   const [activeChat, setActiveChat] = useState({});
   const [user, setUser] = useState(null);
   const [showNewChat, setShowNewChat] = useState(false);
+
+  useEffect(()=>{
+    if(user !== null){
+      let unsub = Api.onChatList(user.id, setChatList);
+      return unsub;
+    }
+  }, [user]);
   
   const handleNewChat = () =>{
     setShowNewChat(true);
@@ -86,7 +92,11 @@ export default() =>{
       </div>
 
       <div className="contentarea">
-        {activeChat.chatId !== undefined && <ChatWindow user={user}/>}
+        {activeChat.chatId !== undefined && 
+          <ChatWindow 
+            user={user}
+            data={activeChat}
+        />}
         {activeChat.chatId === undefined && <ChatIntro/>}
         
       </div>

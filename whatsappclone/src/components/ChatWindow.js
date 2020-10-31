@@ -3,7 +3,6 @@ import EmojiPicker from 'emoji-picker-react';
 import './ChatWindow.css';
 
 import MessageItem from './MessageItem';
-
 import SearchIcon from '@material-ui/icons/Search';
 import AttachFileIcon from '@material-ui/icons/AttachFile';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -11,8 +10,9 @@ import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import CloseIcon from '@material-ui/icons/Close';
 import SendIcon from '@material-ui/icons/Send';
 import MicIcon from '@material-ui/icons/Mic';
+import Api from '../Api';
 
-export default({user}) =>{
+export default({user, data}) =>{
 
     const body = useRef();
 
@@ -23,26 +23,8 @@ export default({user}) =>{
     const [emojiOpen, setEmojiOpen] = useState(false);
     const [text, setText] = useState('');
     const [listening, setListening] = useState(false);
-    const [list, setList] = useState([
-        {author: 123, body: 'bla bla bla'},
-        {author: 123, body: 'bla bla'},
-        {author: 321, body: 'bla'},
-        {author: 123, body: 'bla bla bla'},
-        {author: 123, body: 'bla bla'},
-        {author: 321, body: 'bla'},
-        {author: 123, body: 'bla bla bla'},
-        {author: 123, body: 'bla bla'},
-        {author: 321, body: 'bla'},
-        {author: 123, body: 'bla bla bla'},
-        {author: 123, body: 'bla bla'},
-        {author: 321, body: 'bla'},
-        {author: 123, body: 'bla bla bla'},
-        {author: 123, body: 'bla bla'},
-        {author: 321, body: 'bla'},
-        {author: 123, body: 'bla bla bla'},
-        {author: 123, body: 'bla bla'},
-        {author: 321, body: 'bla'},
-    ]);
+    const [list, setList] = useState([]);
+    const [users, setUsers] = useState([]);
 
     const handleEmojiClick = (e, emojiObject) =>{ setText(text + emojiObject.emoji); }
     const handleOpenEmoji = () =>{ setEmojiOpen(true); }
@@ -61,7 +43,24 @@ export default({user}) =>{
             recognition.start();
         }
     }
-    const handleSendClick = () =>{}
+    const handleInputKeyUp = (e) =>{
+        if(e.keyCode == 13){
+            handleSendClick();
+        }
+    }
+    const handleSendClick = () =>{
+        if(text !== ''){
+            Api.sendMessage(data, user.id, 'text', text, users);
+            setText('');
+            setEmojiOpen(false);
+        }
+    }
+
+    useEffect(()=>{
+        setList([]);
+        let unsub = Api.onChatContent(data.chatId, setList, setUsers);
+        return unsub;
+    },[data.chatId]);
 
     useEffect(()=>{
         if(body.current.scrollHeight > body.current.offsetHeight){
@@ -73,8 +72,8 @@ export default({user}) =>{
         <div className="chatWindow">
             <div className="chatWindow--header">
                 <div className="chatWindow--headerinfo">
-                    <img className="chatWindow--image" src="https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png" alt=""/>
-                    <div className="chatWindow--name">Miguel</div>
+                    <img className="chatWindow--image" src={data.image} alt=""/>
+                    <div className="chatWindow--name">{data.title}</div>
                 </div>
 
                 <div className="chatWindow--headerbuttons">
@@ -124,6 +123,7 @@ export default({user}) =>{
                         placeholder="Digite uma mensagem"
                         value={text} 
                         onChange={e=>setText(e.target.value)}
+                        onKeyUp={handleInputKeyUp}
                     />
                 </div>
 
